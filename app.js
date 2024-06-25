@@ -1,10 +1,10 @@
 // Importing Required Libraries
-const dotenv = require("dotenv");
-const express = require("express");
+const dotenv = require('dotenv');
+const express = require('express');
 
 // Importing Routing
-const tourRouter = require("./routes/tourRoutes");
-const userRouter = require("./routes/userRoutes");
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
 
 // Load Environment Variables
 dotenv.config();
@@ -13,8 +13,8 @@ dotenv.config();
 const app = express();
 
 // Routes Handlers
-app.use("/api/tours", tourRouter);
-app.use("/api/users", userRouter);
+app.use('/api/tours', tourRouter);
+app.use('/api/users', userRouter);
 
 // Setting the port and starting the server
 console.log(process.env.PORT);
