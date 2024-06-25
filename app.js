@@ -9,50 +9,57 @@ dotenv.config();
 const app = express();
 
 // Routes Handlers
-app.get("/api/tours", (req, res) => {
+
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
       tours: "<list of tours>",
     },
   });
-});
+};
 
-app.get("/api/tours/:id", (req, res) => {
+const getSingleTour = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
       tour: "<specified tour>",
     },
   });
-});
+};
 
-app.post("/api/tours", (req, res) => {
+const createTour = (req, res) => {
   res.status(201).json({
     status: "success",
     data: {
       tour: "<create new tour>",
     },
   });
-});
+};
 
-app.patch("/api/tours/:id", (req, res) => {
+const updateTour = (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
       tour: "<update tour tour>",
     },
   });
-});
+};
 
-app.delete("/api/tours/:id", (req, res) => {
+const deleteTour = (req, res) => {
   res.status(204).json({
     status: "success",
     data: {
       tour: null,
     },
   });
-});
+};
+
+app.get("/api/tours", getAllTours);
+app.get("/api/tours/:id", getSingleTour);
+app.post("/api/tours", createTour);
+app.patch("/api/tours/:id", updateTour);
+app.delete("/api/tours/:id", deleteTour);
 
 // Setting the port and starting the server
 console.log(process.env.PORT);
