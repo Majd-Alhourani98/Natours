@@ -18,6 +18,15 @@ app.get("/api/tours", (req, res) => {
   });
 });
 
+app.get("/api/tours/:id", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    data: {
+      tours: "<specified tour>",
+    },
+  });
+});
+
 // Setting the port and starting the server
 console.log(process.env.PORT);
 const PORT = process.env.PORT || 3000;
