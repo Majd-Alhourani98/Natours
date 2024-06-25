@@ -1,5 +1,5 @@
 // Importing Required Libraries
-
+const morgan = require('morgan');
 const express = require('express');
 
 // Importing Routing
@@ -8,6 +8,11 @@ const userRouter = require('./routes/userRoutes');
 
 // Creating an Express app
 const app = express();
+
+// Enable logging in the development Environment
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('tiny'));
+}
 
 // Routes Handlers
 app.use('/api/tours', tourRouter);
