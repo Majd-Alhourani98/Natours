@@ -61,6 +61,12 @@ app.post("/api/tours", createTour);
 app.patch("/api/tours/:id", updateTour);
 app.delete("/api/tours/:id", deleteTour);
 
+app.get("/api/users", getAllUsers);
+app.get("/api/users/:id", getSingleUser);
+app.post("/api/users", createUser);
+app.patch("/api/users/:id", updateUser);
+app.delete("/api/users/:id", deleteUser);
+
 // Setting the port and starting the server
 console.log(process.env.PORT);
 const PORT = process.env.PORT || 3000;
