@@ -27,6 +27,15 @@ app.get("/api/tours/:id", (req, res) => {
   });
 });
 
+app.post("/api/tours", (req, res) => {
+  res.status(201).json({
+    status: "success",
+    data: {
+      tours: "<create new tour>",
+    },
+  });
+});
+
 // Setting the port and starting the server
 console.log(process.env.PORT);
 const PORT = process.env.PORT || 3000;
