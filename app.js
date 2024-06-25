@@ -96,11 +96,12 @@ const deleteUser = (req, res) => {
   });
 };
 
-app.get("/api/tours", getAllTours);
-app.get("/api/tours/:id", getSingleTour);
-app.post("/api/tours", createTour);
-app.patch("/api/tours/:id", updateTour);
-app.delete("/api/tours/:id", deleteTour);
+app.route("/api/tours").get(getAllTours).post(createTour);
+app
+  .route("/api/tours/:id")
+  .get(getSingleTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 app.get("/api/users", getAllUsers);
 app.get("/api/users/:id", getSingleUser);
