@@ -22,7 +22,7 @@ app.get("/api/tours/:id", (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
-      tours: "<specified tour>",
+      tour: "<specified tour>",
     },
   });
 });
@@ -31,7 +31,25 @@ app.post("/api/tours", (req, res) => {
   res.status(201).json({
     status: "success",
     data: {
-      tours: "<create new tour>",
+      tour: "<create new tour>",
+    },
+  });
+});
+
+app.patch("/api/tours/:id", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    data: {
+      tour: "<update tour tour>",
+    },
+  });
+});
+
+app.delete("/api/tours/:id", (req, res) => {
+  res.status(204).json({
+    status: "success",
+    data: {
+      tour: null,
     },
   });
 });
