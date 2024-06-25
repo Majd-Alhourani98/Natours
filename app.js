@@ -103,11 +103,13 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
-app.get("/api/users", getAllUsers);
-app.get("/api/users/:id", getSingleUser);
-app.post("/api/users", createUser);
-app.patch("/api/users/:id", updateUser);
-app.delete("/api/users/:id", deleteUser);
+app.route("/api/users").get(getAllUsers).post(createUser);
+
+app
+  .route("/api/users/:id")
+  .get(getSingleUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 // Setting the port and starting the server
 console.log(process.env.PORT);
