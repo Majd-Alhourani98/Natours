@@ -18,13 +18,19 @@ const getSingleTour = (req, res) => {
   });
 };
 
-const createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: '<create new tour>',
-    },
-  });
+const createTour = async (req, res) => {
+  try {
+    const tour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: { tour },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent!',
+    });
+  }
 };
 
 const updateTour = (req, res) => {
