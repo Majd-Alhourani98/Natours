@@ -7,13 +7,20 @@ const getAllTours = async (req, res) => {
     const excludedFields = ['page', 'limit', 'fields', 'sort'];
     excludedFields.forEach(field => delete queryObj[field]);
 
-    const tours = await Tour.find(queryObj);
+    // Filtering: enable gte gt ...
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    const filter = JSON.parse(queryString);
+
+    const tours = await Tour.find(filter);
+
     res.status(200).json({
       status: 'success',
       result: tours.length,
       data: { tours },
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({
       status: 'fail',
       message: err,
