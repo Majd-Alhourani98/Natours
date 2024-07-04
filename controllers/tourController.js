@@ -1,3 +1,4 @@
+const moment = require('moment');
 const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
 const getAllTours = async (req, res) => {
@@ -237,24 +238,10 @@ const getMonthlyPlan = async (req, res, next) => {
       },
     ]);
 
-    const monthsArray = [
-      '', // Index 0 is empty because months start from 1
-      'January', // Index 1
-      'February', // Index 2
-      'March', // Index 3
-      'April', // Index 4
-      'May', // Index 5
-      'June', // Index 6
-      'July', // Index 7
-      'August', // Index 8
-      'September', // Index 9
-      'October', // Index 10
-      'November', // Index 11
-      'December', // Index 12
-    ];
-
     plan = plan.map(doc => {
-      doc.month = monthsArray[doc.month];
+      doc.month = moment()
+        .month(doc.month - 1)
+        .format('MMMM');
 
       return doc;
     });
