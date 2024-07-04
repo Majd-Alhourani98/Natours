@@ -1,8 +1,5 @@
-const { default: mongoose } = require('mongoose');
 const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
-const { default: group } = require('underscore/modules/_group.js');
-
 const getAllTours = async (req, res) => {
   try {
     const queryBuilder = new QueryBuilder(Tour, req.query).filter().sort().select().paginate();
@@ -197,6 +194,85 @@ const getTourStats = async (req, res, next) => {
     });
   }
 };
+
+const getMonthlyPlan = async (req, res, next) => {
+  try {
+    const { year } = req.params;
+
+    let plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numToursStats: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+
+      {
+        $addFields: {
+          month: '$_id',
+        },
+      },
+
+      {
+        $project: { _id: 0 },
+      },
+
+      {
+        $sort: {
+          numToursStats: -1,
+        },
+      },
+    ]);
+
+    const monthsArray = [
+      '', // Index 0 is empty because months start from 1
+      'January', // Index 1
+      'February', // Index 2
+      'March', // Index 3
+      'April', // Index 4
+      'May', // Index 5
+      'June', // Index 6
+      'July', // Index 7
+      'August', // Index 8
+      'September', // Index 9
+      'October', // Index 10
+      'November', // Index 11
+      'December', // Index 12
+    ];
+
+    plan = plan.map(doc => {
+      doc.month = monthsArray[doc.month];
+
+      return doc;
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: { plan },
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({
+      status: 'fail',
+
+      message: err,
+    });
+  }
+};
+
 module.exports = {
   getAllTours,
   getSingleTour,
@@ -205,4 +281,5 @@ module.exports = {
   deleteTour,
   topFiveCheapTours,
   getTourStats,
+  getMonthlyPlan,
 };
