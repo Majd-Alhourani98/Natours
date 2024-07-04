@@ -1,7 +1,7 @@
 class QueryBuilder {
-  constructor(query, queryString) {
-    this.query = query;
+  constructor(model, queryString) {
     this.queryString = queryString;
+    this.query = model.find();
   }
 
   // Filtering

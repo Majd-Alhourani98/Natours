@@ -106,7 +106,7 @@ tourSchema.virtual('durationInWeeks').get(function () {
 
 // calculate the price in KWD
 tourSchema.virtual('priceInKWD').get(function () {
-  return Number((this.price / 3.2).toFixed(2));
+  return this.price ? Number((this.price / 3.2).toFixed(2)) : undefined;
 });
 
 // Document Middleware: add slug
