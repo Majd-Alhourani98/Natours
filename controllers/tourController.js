@@ -160,6 +160,26 @@ const getTourStats = async (req, res, next) => {
                 toursMinPriceAverage: { $round: '$toursMinPriceAverageprice' },
               },
             },
+
+            {
+              $sort: { toursAvgPriceAverage: 1 },
+            },
+
+            {
+              $match: { _id: { $ne: 'easy' } },
+            },
+
+            {
+              $addFields: {
+                difficulty: '$_id',
+              },
+            },
+
+            {
+              $project: {
+                _id: 0,
+              },
+            },
           ],
         },
       },
