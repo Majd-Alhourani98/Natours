@@ -1,6 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
+const { default: group } = require('underscore/modules/_group.js');
 
 const getAllTours = async (req, res) => {
   try {
@@ -100,17 +101,66 @@ const getTourStats = async (req, res, next) => {
       },
 
       {
-        $group: {
-          _id: null,
-          numberOfAllTours: { $sum: 1 },
+        $facet: {
+          // All tours stats
+          AllToursStats: [
+            {
+              $group: {
+                _id: null,
+                numberOfAllTours: { $sum: 1 },
 
-          toursRatingsAverage: { $avg: '$ratingsAverage' },
-          toursMaxRatingsAverage: { $max: '$ratingsAverage' },
-          toursMinRatingsAverage: { $min: '$ratingsAverage' },
+                toursRatingsAverage: { $avg: '$ratingsAverage' },
+                toursMaxRatingsAverage: { $max: '$ratingsAverage' },
+                toursMinRatingsAverage: { $min: '$ratingsAverage' },
 
-          toursAvgPriceAverage: { $avg: '$price' },
-          toursMaxPriceAverage: { $max: '$price' },
-          toursMinPriceAverage: { $min: '$price' },
+                toursAvgPriceAverage: { $avg: '$price' },
+                toursMaxPriceAverage: { $max: '$price' },
+                toursMinPriceAverage: { $min: '$price' },
+              },
+            },
+
+            {
+              $project: {
+                toursRatingsAverage: { $round: '$toursRatingsAverage' },
+                toursMaxRatingsAverage: { $round: '$toursMaxRatingsAverage' },
+                toursMinRatingsAverage: { $round: '$toursMinRatingsAverage' },
+
+                toursAvgPriceAverage: { $round: '$toursAvgPriceAverage' },
+                toursMaxPriceAverage: { $round: '$toursMaxPriceAverage' },
+                toursMinPriceAverage: { $round: '$toursMinPriceAverageprice' },
+              },
+            },
+          ],
+
+          //  group of tours stats
+          groupOfToursStats: [
+            {
+              $group: {
+                _id: '$difficulty',
+                numberOfAllTours: { $sum: 1 },
+
+                toursRatingsAverage: { $avg: '$ratingsAverage' },
+                toursMaxRatingsAverage: { $max: '$ratingsAverage' },
+                toursMinRatingsAverage: { $min: '$ratingsAverage' },
+
+                toursAvgPriceAverage: { $avg: '$price' },
+                toursMaxPriceAverage: { $max: '$price' },
+                toursMinPriceAverage: { $min: '$price' },
+              },
+            },
+
+            {
+              $project: {
+                toursRatingsAverage: { $round: '$toursRatingsAverage' },
+                toursMaxRatingsAverage: { $round: '$toursMaxRatingsAverage' },
+                toursMinRatingsAverage: { $round: '$toursMinRatingsAverage' },
+
+                toursAvgPriceAverage: { $round: '$toursAvgPriceAverage' },
+                toursMaxPriceAverage: { $round: '$toursMaxPriceAverage' },
+                toursMinPriceAverage: { $round: '$toursMinPriceAverageprice' },
+              },
+            },
+          ],
         },
       },
     ]);
