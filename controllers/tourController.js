@@ -236,6 +236,9 @@ const getMonthlyPlan = async (req, res, next) => {
           numToursStats: -1,
         },
       },
+      {
+        $limit: 5,
+      },
     ]);
 
     plan = plan.map(doc => {
