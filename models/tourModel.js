@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -64,6 +65,7 @@ const tourSchema = new mongoose.Schema(
     },
 
     startDates: [Date],
+    slug: String,
   },
   {
     toJSON: { virtuals: true },
@@ -71,10 +73,21 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// calculate duration in weeks
 tourSchema.virtual('durationInWeeks').get(function () {
-  return (this.duration / 7).toFixed(2);
+  return Number((this.duration / 7).toFixed(2));
 });
 
+// calculate the price in KWD
+tourSchema.virtual('priceInKWD').get(function () {
+  return Number((this.price / 3.2).toFixed(2));
+});
+
+// Document Middleware: add slug
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
