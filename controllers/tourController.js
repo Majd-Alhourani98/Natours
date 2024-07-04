@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
 
@@ -89,6 +90,43 @@ const topFiveCheapTours = (req, res, next) => {
   req.query.fields = 'name,duration,price,ratingsAverage';
   next();
 };
+
+// Get tours Statistics
+const getTourStats = async (req, res, next) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+
+      {
+        $group: {
+          _id: null,
+          numberOfAllTours: { $sum: 1 },
+
+          toursRatingsAverage: { $avg: '$ratingsAverage' },
+          toursMaxRatingsAverage: { $max: '$ratingsAverage' },
+          toursMinRatingsAverage: { $min: '$ratingsAverage' },
+
+          toursAvgPriceAverage: { $avg: '$price' },
+          toursMaxPriceAverage: { $max: '$price' },
+          toursMinPriceAverage: { $min: '$price' },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: { stats },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+
+      message: err,
+    });
+  }
+};
 module.exports = {
   getAllTours,
   getSingleTour,
@@ -96,4 +134,5 @@ module.exports = {
   updateTour,
   deleteTour,
   topFiveCheapTours,
+  getTourStats,
 };

@@ -9,13 +9,13 @@ const Tour = require('./../models/tourModel');
 dotenv.config();
 
 const tours = JSON.parse(fs.readFileSync(path.join(__dirname, 'tours-simple.json'), 'utf-8'));
-
-const DATABASE_URL = `${process.env.DATABASE_MONGODB_URL}/${process.env.DATABASE_MOGNODB_NAME}`;
+// DATABASE CONNECTION
+const MONGODB_URL = process.env.DATABASE_ATLAS_URL.replace('<PASSWORD>', process.env.DATABASE_ATLAS_PASSWORD);
+// const MONGODB_URL = process.env.DATABASE_LOCAL_URL;
 mongoose
-  .connect(DATABASE_URL)
-  .then(() => console.log('CONNECTED TO DATABSE'))
-  .catch(() => console.log('CONNECTION TO DATABASE FAILE 😈'));
-
+  .connect(MONGODB_URL)
+  .then(con => console.log('DATABASE CONNECTED'))
+  .catch(err => console.log(err.message));
 const importData = async () => {
   await Tour.create(tours);
   console.log('Data imported successfully');
