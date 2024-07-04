@@ -16,7 +16,6 @@ class QueryBuilder {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     const filter = JSON.parse(queryStr);
     this.query = this.query.find(filter);
-
     return this;
   }
 

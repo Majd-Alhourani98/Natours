@@ -101,7 +101,7 @@ const tourSchema = new mongoose.Schema(
 
 // calculate duration in weeks
 tourSchema.virtual('durationInWeeks').get(function () {
-  return Number((this.duration / 7).toFixed(2));
+  return this.duration ? Number((this.duration / 7).toFixed(2)) : undefined;
 });
 
 // calculate the price in KWD
@@ -118,6 +118,11 @@ tourSchema.pre('save', function (next) {
 // Query middleware: exclude secret Tours from Query
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  if (!this.price) virtuals.set;
   next();
 });
 
