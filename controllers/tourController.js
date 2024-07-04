@@ -106,7 +106,6 @@ const getTourStats = async (req, res, next) => {
               $group: {
                 _id: null,
                 numberOfAllTours: { $sum: 1 },
-
                 toursRatingsAverage: { $avg: '$ratingsAverage' },
                 toursMaxRatingsAverage: { $max: '$ratingsAverage' },
                 toursMinRatingsAverage: { $min: '$ratingsAverage' },
@@ -119,6 +118,7 @@ const getTourStats = async (req, res, next) => {
 
             {
               $project: {
+                numberOfAllTours: '$numberOfAllTours',
                 toursRatingsAverage: { $round: '$toursRatingsAverage' },
                 toursMaxRatingsAverage: { $round: '$toursMaxRatingsAverage' },
                 toursMinRatingsAverage: { $round: '$toursMinRatingsAverage' },
@@ -236,9 +236,9 @@ const getMonthlyPlan = async (req, res, next) => {
           numToursStats: -1,
         },
       },
-      {
-        $limit: 5,
-      },
+      // {
+      //   $limit: 5,
+      // },
     ]);
 
     plan = plan.map(doc => {
