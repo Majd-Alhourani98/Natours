@@ -94,6 +94,7 @@ const tourSchema = new mongoose.Schema(
     },
   },
   {
+    id: false,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
@@ -118,11 +119,6 @@ tourSchema.pre('save', function (next) {
 // Query middleware: exclude secret Tours from Query
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
-  next();
-});
-
-tourSchema.pre(/^find/, function (next) {
-  if (!this.price) virtuals.set;
   next();
 });
 
