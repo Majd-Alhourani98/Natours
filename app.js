@@ -2,6 +2,7 @@
 const morgan = require('morgan');
 const express = require('express');
 const AppError = require('./util/AppError');
+const globalErrorMiddleware = require('./middlewares/globalErrorMiddleware');
 // Importing Routing
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -27,14 +28,6 @@ app.all('*', (req, res, next) => {
 });
 
 // Global Error Handling Middlware
-app.use((err, req, res, next) => {
-  err.status = err.status || 'error';
-  err.statusCode = err.statusCode || 500;
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-});
+app.use(globalErrorMiddleware);
 
 module.exports = app;
