@@ -1,8 +1,10 @@
 // Importing Required Libraries
 const morgan = require('morgan');
 const express = require('express');
+
 const AppError = require('./util/AppError');
 const globalErrorMiddleware = require('./middlewares/globalErrorMiddleware');
+
 // Importing Routing
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
