@@ -3,8 +3,12 @@ const AppError = require('../util/AppError');
 const handleCastErrorDB = err => new AppError(`Invalid ${err.path}: ${err.value}`, 400);
 const handleDuplicateFieldsDB = err => new AppError(`${err.keyValue.name} already exist`, 400);
 const handleVlidationErrorDB = err => {
-  const errors = Object.values(err.errors).map(error => error.message);
-  return new AppError(`Invalid input data. ${errors.join(', ')}`, 400);
+  let errorObject = {};
+  for (item of Object.keys(err.errors)) {
+    errorObject[item] = err.errors[item].message;
+  }
+
+  return new AppError(JSON.stringify(errorObject), 400);
 };
 
 const sendErrorDev = (err, res) => {
