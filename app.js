@@ -1,7 +1,7 @@
 // Importing Required Libraries
 const morgan = require('morgan');
 const express = require('express');
-
+const AppError = require('./util/AppError');
 // Importing Routing
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -23,11 +23,7 @@ app.use('/api/users', userRouter);
 
 // handle unhandled routes
 app.all('*', (req, res, next) => {
-  const err = new Error(`Can't find ${req.originalUrl} on this server`);
-  err.status = 'fail';
-  err.statusCode = 404;
-
-  next(err);
+  next(new AppError(`Can't find ${req.originalUrl} on this server`));
 });
 
 // Global Error Handling Middlware
