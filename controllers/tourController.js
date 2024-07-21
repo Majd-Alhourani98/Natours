@@ -2,8 +2,9 @@ const moment = require('moment');
 const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
 const catchAsync = require('./../util/catchAsync');
+const AppError = require('../util/AppError');
 
-const getAllTours = catchAsync(async (req, res) => {
+const getAllTours = catchAsync(async (req, res, next) => {
   const queryBuilder = new QueryBuilder(Tour, req.query).filter().sort().select().paginate();
   const tours = await queryBuilder.query;
 
@@ -14,23 +15,28 @@ const getAllTours = catchAsync(async (req, res) => {
   });
 });
 
-const getSingleTour = catchAsync(async (req, res) => {
-  const tour = await Tour.findById(req.params.id);
+const getSingleTour = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const tour = await Tour.findById(id);
+
+  if (!tour) return next(new AppError(`There is tour with the id ${id}`), 404);
+
   res.status(200).json({
     status: 'success',
     data: { tour },
   });
 });
 
-const createTour = catchAsync(async (req, res) => {
+const createTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.create(req.body);
+
   res.status(201).json({
     status: 'success',
     data: { tour },
   });
 });
 
-const updateTour = catchAsync(async (req, res) => {
+const updateTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
   res.status(200).json({
     status: 'success',
@@ -38,7 +44,7 @@ const updateTour = catchAsync(async (req, res) => {
   });
 });
 
-const deleteTour = catchAsync(async (req, res) => {
+const deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
   res.status(204).json({
     status: 'success',
