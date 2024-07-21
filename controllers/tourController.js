@@ -19,7 +19,7 @@ const getSingleTour = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const tour = await Tour.findById(id);
 
-  if (!tour) return next(new AppError(`There is tour with the id ${id}`), 404);
+  if (!tour) return next(new AppError(`No tour found with the ${id}`), 404);
 
   res.status(200).json({
     status: 'success',
@@ -37,7 +37,11 @@ const createTour = catchAsync(async (req, res, next) => {
 });
 
 const updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+  const { id } = req.params;
+  const tour = await Tour.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+
+  if (!tour) return next(new AppError(`No tour found with the ${id}`), 404);
+
   res.status(200).json({
     status: 'success',
     data: { tour },
