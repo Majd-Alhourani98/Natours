@@ -2,6 +2,14 @@ const dotenv = require('dotenv');
 const app = require('./app');
 const mongoose = require('mongoose');
 
+// Handle Uncaught Exception
+
+process.on('uncaughtException', err => {
+  console.log(err.name, err.message);
+  console.log('UNCAUGHT EXCPECTION! 😈 Shutting down...');
+  process.exit(1);
+});
+
 // Load Environment Variables
 dotenv.config();
 
@@ -54,3 +62,5 @@ process.on('unhandledRejection', err => {
     process.exit(1);
   });
 });
+
+// uncaughtException
