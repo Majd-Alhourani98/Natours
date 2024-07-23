@@ -11,7 +11,7 @@ const MONGODB_URL = process.env.DATABASE_ATLAS_URL.replace('<PASSWORD>', process
 mongoose
   .connect(MONGODB_URL)
   .then(() => console.log('DATABASE CONNECTED'))
-  .catch(err => console.error('DATABASE CONNECTION ERROR:', err));
+  .catch(err => console.error('DATABASE CONNECTION ERROR'));
 
 // Event listeners for Mongoose connection
 mongoose.connection.on('connected', () => {
@@ -19,7 +19,7 @@ mongoose.connection.on('connected', () => {
 });
 
 mongoose.connection.on('error', err => {
-  console.error('Mongoose connection error:', err);
+  console.error('Mongoose connection error');
 });
 
 mongoose.connection.on('disconnected', () => {
@@ -44,4 +44,13 @@ process.on('SIGINT', async () => {
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+
+process.on('unhandledRejection', err => {
+  // we should log the message or send the error to the email
+  console.log(err.name, err.message);
+  console.log('UNHANDLED REJECTION! 😈 Shutting down...');
+  server.close(() => {
+    process.exit(1);
+  });
+});
