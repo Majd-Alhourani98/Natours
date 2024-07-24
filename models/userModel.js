@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
 // User Schema
 const userSchema = new mongoose.Schema(
   {
@@ -27,6 +29,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide your password'],
       minLength: [8, 'Password should be at least 8 characters.'],
+      select: false, // find
     },
 
     passwordConfirm: {
@@ -46,6 +49,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Encrypt the password
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
@@ -53,6 +57,18 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// check if the password is correct
+userSchema.methods.isCorrectPassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword);
+};
+
+// Generete Token
+userSchema.methods.signToken = id => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
 
 const User = mongoose.model('User', userSchema);
 
