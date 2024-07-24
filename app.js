@@ -8,6 +8,7 @@ const globalErrorMiddleware = require('./middlewares/globalErrorMiddleware');
 // Importing Routing
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const authRouter = require('./routes/authRoutes');
 
 // Creating an Express app
 const app = express();
@@ -23,6 +24,7 @@ if (process.env.NODE_ENV === 'development') {
 // Routes Handlers
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
+app.use('/api/auth', authRouter);
 
 // handle unhandled routes
 app.all('*', (req, res, next) => {

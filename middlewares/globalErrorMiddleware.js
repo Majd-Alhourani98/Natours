@@ -1,7 +1,8 @@
 const AppError = require('../util/AppError');
 
 const handleCastErrorDB = err => new AppError(`Invalid ${err.path}: ${err.value}`, 400);
-const handleDuplicateFieldsDB = err => new AppError(`${err.keyValue.name} already exist`, 400);
+const handleDuplicateFieldsDB = err => new AppError(`${Object.values(err.keyValue)[0]} already exist`, 400);
+
 const handleVlidationErrorDB = err => {
   let errorObject = {};
   for (item of Object.keys(err.errors)) {
