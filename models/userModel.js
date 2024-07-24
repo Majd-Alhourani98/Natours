@@ -2,44 +2,49 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 // User Schema
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please tell us your name'],
-    trim: true,
-  },
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Please tell us your name'],
+      trim: true,
+    },
 
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
-  },
+    email: {
+      type: String,
+      required: [true, 'Please provide your email'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      validate: [validator.isEmail, 'Please provide a valid email'],
+    },
 
-  photo: {
-    type: String,
-  },
+    photo: {
+      type: String,
+    },
 
-  password: {
-    type: String,
-    required: [true, 'Please provide your password'],
-    minLength: [8, 'Password should be at least 8 characters.'],
-  },
+    password: {
+      type: String,
+      required: [true, 'Please provide your password'],
+      minLength: [8, 'Password should be at least 8 characters.'],
+    },
 
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      validator: function (value) {
-        return value === this.password;
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please confirm your password'],
+      validate: {
+        validator: function (value) {
+          return value === this.password;
+        },
+
+        message: 'Passwords are not the same',
       },
-
-      message: 'Passwords are not the same',
     },
   },
-});
+  {
+    id: false,
+  }
+);
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
