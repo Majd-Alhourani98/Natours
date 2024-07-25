@@ -4,12 +4,11 @@ const handleCastErrorDB = err => new AppError(`Invalid ${err.path}: ${err.value}
 const handleDuplicateFieldsDB = err => new AppError(`${Object.values(err.keyValue)[0]} already exist`, 400);
 
 const handleVlidationErrorDB = err => {
-  let errorObject = {};
-  for (item of Object.keys(err.errors)) {
-    errorObject[item] = err.errors[item].message;
-  }
+  const errorObjects = Object.values(err.errors).map(error => {
+    return { [error.path]: error.message };
+  });
 
-  return new AppError(JSON.stringify(errorObject), 400);
+  return new AppError(JSON.stringify(errorObjects), 400);
 };
 
 const sendErrorDev = (err, res) => {
@@ -22,7 +21,6 @@ const sendErrorDev = (err, res) => {
 };
 
 const sendErrorProd = (err, res) => {
-  console.log(err);
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
