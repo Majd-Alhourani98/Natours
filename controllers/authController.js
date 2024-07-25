@@ -34,10 +34,24 @@ const login = catchAsync(async (req, res, next) => {
 
   const token = user.signToken(user._id);
 
+  console.log(token);
   res.status(200).json({
     status: 'success',
     token,
   });
 });
 
-module.exports = { signup, login };
+const protect = catchAsync(async (req, res, next) => {
+  // 1) Get the token and check if exist
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    // CHECK req.header.autor
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) next(new AppError('you are not logged, please login to get access', 401));
+
+  next();
+});
+
+module.exports = { signup, login, protect };
