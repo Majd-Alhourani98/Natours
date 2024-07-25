@@ -58,14 +58,14 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// check if the password is correct
+// Check if the password is correct
 userSchema.methods.isCorrectPassword = async (password, hashedPassword) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
 // Generete Token
 userSchema.methods.signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
