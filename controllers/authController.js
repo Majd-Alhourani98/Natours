@@ -5,13 +5,14 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../util/catchAsync');
 const AppError = require('./../util/AppError');
 
+// Sign up
 const signup = catchAsync(async (req, res, next) => {
   const user = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
+    role: req.body.role,
   });
 
   const token = user.signToken(user._id);
@@ -25,6 +26,7 @@ const signup = catchAsync(async (req, res, next) => {
   });
 });
 
+// Login
 const login = catchAsync(async (req, res, next) => {
   // check if the email or password exist in the body
   const { email, password } = req.body;
@@ -44,6 +46,7 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
+// Protect
 const protect = catchAsync(async (req, res, next) => {
   // 1) Get the token and check if exist
   let token;
@@ -61,7 +64,7 @@ const protect = catchAsync(async (req, res, next) => {
   if (!user) return next(new AppError('The user belonging to this token does no longer exist', 401));
 
   // Check if user changed password after the token was issued
-  if (user.isChangedPassword(iat))
+  if (user.isChangedPasswordAfter(iat))
     return next(new AppError('User recently changed password! Please log in again', 401));
 
   req.user = user;
@@ -69,4 +72,16 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-module.exports = { signup, login, protect };
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role))
+      return next(new AppError('You do not have permission to perfrom this action', 403));
+
+    next();
+  };
+};
+
+module.exports = { signup, login, protect, restrictTo };
+
+// POSTMAN ENVIRONMENT VARIABLES
+// pm.environment.set('jwt', pm.response.json().token)

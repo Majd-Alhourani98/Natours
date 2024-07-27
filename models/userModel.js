@@ -44,6 +44,14 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    role: {
+      type: String,
+      enum: {
+        values: ['user', 'guide', 'lead-guide', 'admin'],
+        message: 'Difficulty is either: easy, medium, difficulty',
+      },
+    },
+
     passwordChangedAt: Date,
   },
   {
@@ -73,7 +81,7 @@ userSchema.methods.signToken = id => {
 };
 
 // check if the password changed after a token issued
-userSchema.methods.isChangedPassword = function (JWTTimestamp) {
+userSchema.methods.isChangedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) return parseInt(this.passwordChangedAt.getTime() / 1000, 10) > JWTTimestamp;
 
   return false;
