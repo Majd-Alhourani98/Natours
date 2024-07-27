@@ -1,4 +1,6 @@
+const crypto = require('crypto');
 const { promisify } = require('util');
+
 const jwt = require('jsonwebtoken');
 
 const User = require('./../models/userModel');
@@ -81,7 +83,26 @@ const restrictTo = (...roles) => {
   };
 };
 
-module.exports = { signup, login, protect, restrictTo };
+// Forget Password
+const forgotPassword = catchAsync(async (req, res, next) => {
+  // check the email
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) return next(new AppError('There is no user with the email address', 404));
+
+  // Genrete password reset token
+  const passwordResetToken = crypto.randomBytes(32).toString('hex');
+  const hashedPasswordResetToken = crypto.createHash('sha256').update(passwordResetToken).digest('hex');
+  user.passwordResetToken = passwordResetToken;
+
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({});
+});
+
+module.exports = { signup, login, protect, restrictTo, forgotPassword };
 
 // POSTMAN ENVIRONMENT VARIABLES
 // pm.environment.set('jwt', pm.response.json().token)

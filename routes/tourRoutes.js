@@ -15,9 +15,11 @@ const {
 const { protect, restrictTo } = require('./../controllers/authController');
 
 router.route('/tours-stats').get(getTourStats);
+
 router.route('/monthly-plan/:year').get(getMonthlyPlan);
 
 router.route('/top-5-cheap-tours').get(topFiveCheapTours, getAllTours);
+
 router.route('/').get(protect, getAllTours).post(createTour);
 
 router
