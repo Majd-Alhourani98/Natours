@@ -43,6 +43,8 @@ const userSchema = new mongoose.Schema(
         message: 'Passwords are not the same',
       },
     },
+
+    passwordChangedAt: Date,
   },
   {
     id: false,
@@ -68,6 +70,14 @@ userSchema.methods.signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+};
+
+// check if the password changed after a token issued
+userSchema.methods.isChangedPassword = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    return parseInt(this.passwordChangedAt.getTime() / 1000, 10) > JWTTimestamp;
+  }
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);
