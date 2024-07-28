@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const validator = require('validator');
@@ -87,6 +88,19 @@ userSchema.methods.isChangedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) return parseInt(this.passwordChangedAt.getTime() / 1000, 10) > JWTTimestamp;
 
   return false;
+};
+
+// Create Password Reset Token
+userSchema.methods.createPasswordResetToken = function () {
+  // create a random token
+  const passwordResetToken = crypto.randomBytes(32).toString('hex');
+  const hashedPasswordResetToken = crypto.createHash('sha256').update(passwordResetToken).digest('hex');
+
+  // save the token info in the database
+  this.passwordResetToken = hashedPasswordResetToken;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return hashedPasswordResetToken;
 };
 
 const User = mongoose.model('User', userSchema);

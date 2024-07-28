@@ -92,14 +92,9 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   if (!user) return next(new AppError('There is no user with the email address', 404));
 
   // Genrete password reset token
-  const passwordResetToken = crypto.randomBytes(32).toString('hex');
-  const hashedPasswordResetToken = crypto.createHash('sha256').update(passwordResetToken).digest('hex');
-  user.passwordResetToken = passwordResetToken;
 
-  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  const resetToken = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
-
-  res.status(200).json({});
 });
 
 module.exports = { signup, login, protect, restrictTo, forgotPassword };
