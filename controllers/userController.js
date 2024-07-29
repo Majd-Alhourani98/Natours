@@ -8,6 +8,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
     data: { users },
   });
 });
+
 const getSingleUser = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -16,6 +17,7 @@ const getSingleUser = (req, res) => {
     },
   });
 };
+
 const createUser = (req, res) => {
   res.status(201).json({
     status: 'success',
@@ -24,6 +26,7 @@ const createUser = (req, res) => {
     },
   });
 };
+
 const updateUser = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -32,6 +35,7 @@ const updateUser = (req, res) => {
     },
   });
 };
+
 const deleteUser = (req, res) => {
   res.status(204).json({
     status: 'success',

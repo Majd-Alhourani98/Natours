@@ -7,7 +7,19 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../util/catchAsync');
 const AppError = require('./../util/AppError');
 const sendEmail = require('./../util/email');
+const { allowedNodeEnvironmentFlags } = require('process');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+
+  Object.keys(obj).forEach(el => {
+    if (allowedFields.includes(el)) {
+      newObj[el] = obj[el];
+    }
+  });
+
+  return newObj;
+};
 // Sign up
 const signup = catchAsync(async (req, res, next) => {
   const user = await User.create({
@@ -16,6 +28,7 @@ const signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     // role: req.body.role,
+    // passwordChangedAt: req.body.passwordChangedAt
   });
 
   const token = user.signToken(user._id);
@@ -172,7 +185,32 @@ const updatePassword = catchAsync(async (req, res, next) => {
   });
 });
 
-module.exports = { signup, login, protect, restrictTo, resetPassword, forgotPassword, updatePassword };
+const updateMe = catchAsync(async (req, res, next) => {
+  if (req.body.password || req.body.passwordConfirm)
+    return next(new AppError('this route is not for password updates, please use /update-password'));
+
+  // filtering
+  const filteredObject = filterObj(req.body, 'email', 'name');
+
+  // update
+  const user = await User.findByIdAndUpdate(req.user._id, filteredObject, { new: true, runValidators: true });
+
+  res.status(200).json({
+    status: 'success',
+    data: { user },
+  });
+});
+
+module.exports = {
+  signup,
+  login,
+  protect,
+  restrictTo,
+  resetPassword,
+  updateMe,
+  forgotPassword,
+  updatePassword,
+};
 
 // POSTMAN ENVIRONMENT VARIABLES
 // pm.environment.set('jwt', pm.response.json().token)
