@@ -150,6 +150,28 @@ const resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
+const updatePassword = catchAsync(async (req, res, next) => {
+  const { password, passwordConfirm, currentPassword } = req.body;
+  // 1. get the user from database
+  const user = await User.findById(req.user._id).select('+password');
+
+  // 2. Check if the current password is correct
+  if (!(await user.isCorrectPassword(currentPassword, user.password))) {
+    return next(new AppError('Your current password is wrong'));
+  }
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
+
+  const token = user.signToken(user._id);
+
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
+});
+
 module.exports = { signup, login, protect, restrictTo, resetPassword, forgotPassword, updatePassword };
 
 // POSTMAN ENVIRONMENT VARIABLES
