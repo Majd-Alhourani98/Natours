@@ -73,6 +73,7 @@ userSchema.pre('save', async function (next) {
 
 // Check if the password is correct
 userSchema.methods.isCorrectPassword = async (password, hashedPassword) => {
+  console.log(password, hashedPassword);
   return await bcrypt.compare(password, hashedPassword);
 };
 
@@ -103,6 +104,13 @@ userSchema.methods.createPasswordResetToken = function () {
   return hashedPasswordResetToken;
 };
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || !this.isNew) return next();
+
+  this.passwordChangedAt = Date.now();
+
+  next();
+});
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

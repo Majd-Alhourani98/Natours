@@ -15,7 +15,7 @@ const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    role: req.body.role,
+    // role: req.body.role,
   });
 
   const token = user.signToken(user._id);
@@ -122,7 +122,35 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-module.exports = { signup, login, protect, restrictTo, forgotPassword };
+const resetPassword = catchAsync(async (req, res, next) => {
+  // 1. get and hash the token
+  const { token } = req.params;
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  // 2. get the user based on the token
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gte: Date.now() },
+  });
+
+  if (!user) return next(new AppError('Token is invalid or has expired', 400));
+
+  // 3. If token has not expired, and there is user, set the new password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  // 4. Update the changedPassword At property
+  // pre save middleware
+
+  const JWTtoken = user.signToken(user._id);
+  res.status(200).json({
+    status: 'success',
+    token: JWTtoken,
+  });
+});
+
+module.exports = { signup, login, protect, restrictTo, resetPassword, forgotPassword, updatePassword };
 
 // POSTMAN ENVIRONMENT VARIABLES
 // pm.environment.set('jwt', pm.response.json().token)
