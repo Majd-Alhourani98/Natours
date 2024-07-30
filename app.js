@@ -2,6 +2,7 @@
 const morgan = require('morgan');
 const express = require('express');
 const rateLimiter = require('express-rate-limit');
+const helmet = require('helmet');
 
 const AppError = require('./util/AppError');
 const globalErrorMiddleware = require('./middlewares/globalErrorMiddleware');
@@ -13,6 +14,9 @@ const authRouter = require('./routes/authRoutes');
 
 // Creating an Express app
 const app = express();
+
+// set security HTTP headers
+app.use(helmet());
 
 // RATE LIMITER
 app.use(
@@ -29,11 +33,11 @@ app.use(
   rateLimiter({
     max: 10,
     windowMs: 60 * 60 * 1000,
-    message: 'Too Many request, Please Login again',
+    message: 'Too Many requests, Please Login again in an hour',
   })
 );
 // JSON parsing
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 
 // Enable logging in the development Environment
 if (process.env.NODE_ENV === 'development') {
