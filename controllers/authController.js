@@ -11,7 +11,6 @@ const { allowedNodeEnvironmentFlags } = require('process');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
-
   Object.keys(obj).forEach(el => {
     if (allowedFields.includes(el)) {
       newObj[el] = obj[el];
@@ -20,6 +19,14 @@ const filterObj = (obj, ...allowedFields) => {
 
   return newObj;
 };
+
+// Cookie Options
+const cookieOptions = {
+  expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+  httpOnly: true,
+};
+if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
 // Sign up
 const signup = catchAsync(async (req, res, next) => {
   const user = await User.create({
@@ -35,6 +42,8 @@ const signup = catchAsync(async (req, res, next) => {
 
   user.password = undefined;
   user.active = undefined;
+
+  res.cookie('jwt', token, cookieOptions);
 
   res.status(201).json({
     status: 'success',
@@ -56,6 +65,8 @@ const login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
 
   const token = user.signToken(user._id);
+
+  res.cookie('jwt', token, cookieOptions);
 
   res.status(200).json({
     status: 'success',
@@ -157,6 +168,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
   // 4. Update the changedPassword At property
   // pre save middleware
 
+  res.cookie('jwt', JWTtoken, cookieOptions);
   const JWTtoken = user.signToken(user._id);
   res.status(200).json({
     status: 'success',
@@ -179,7 +191,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   const token = user.signToken(user._id);
-
+  res.cookie('jwt', JWTtoken, cookieOptions);
   res.status(200).json({
     status: 'success',
     token,
