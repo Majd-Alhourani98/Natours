@@ -1,6 +1,7 @@
 // Importing Required Libraries
 const morgan = require('morgan');
 const express = require('express');
+const rateLimiter = require('express-rate-limit');
 
 const AppError = require('./util/AppError');
 const globalErrorMiddleware = require('./middlewares/globalErrorMiddleware');
@@ -13,6 +14,24 @@ const authRouter = require('./routes/authRoutes');
 // Creating an Express app
 const app = express();
 
+// RATE LIMITER
+app.use(
+  '/',
+  rateLimiter({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too Many request, Please try again later in an hour',
+  })
+);
+
+app.use(
+  '/api/auth/login',
+  rateLimiter({
+    max: 10,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too Many request, Please Login again',
+  })
+);
 // JSON parsing
 app.use(express.json());
 

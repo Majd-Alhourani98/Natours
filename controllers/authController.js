@@ -165,11 +165,10 @@ const resetPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
-  // 4. Update the changedPassword At property
-  // pre save middleware
-
   res.cookie('jwt', JWTtoken, cookieOptions);
+
   const JWTtoken = user.signToken(user._id);
+
   res.status(200).json({
     status: 'success',
     token: JWTtoken,
