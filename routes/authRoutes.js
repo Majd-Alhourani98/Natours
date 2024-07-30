@@ -9,6 +9,7 @@ const {
   resetPassword,
   updatePassword,
   updateMe,
+  deleteMe,
 } = require('../controllers/authController');
 
 router.route('/signup').post(signup);
@@ -19,4 +20,6 @@ router.route('/reset-password/:token').patch(resetPassword);
 
 router.route('/update-password').patch(protect, updatePassword);
 router.route('/update-me').patch(protect, updateMe);
+router.route('/delete-me').delete(protect, deleteMe);
+
 module.exports = router;

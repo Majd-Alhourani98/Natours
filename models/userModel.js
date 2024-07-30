@@ -5,62 +5,63 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
 // User Schema
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'Please tell us your name'],
-      trim: true,
-    },
-
-    email: {
-      type: String,
-      required: [true, 'Please provide your email'],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      validate: [validator.isEmail, 'Please provide a valid email'],
-    },
-
-    photo: {
-      type: String,
-    },
-
-    password: {
-      type: String,
-      required: [true, 'Please provide your password'],
-      minLength: [8, 'Password should be at least 8 characters.'],
-      select: false, // find
-    },
-
-    passwordConfirm: {
-      type: String,
-      required: [true, 'Please confirm your password'],
-      validate: {
-        validator: function (value) {
-          return value === this.password;
-        },
-
-        message: 'Passwords are not the same',
-      },
-    },
-
-    role: {
-      type: String,
-      enum: {
-        values: ['user', 'guide', 'lead-guide', 'admin'],
-        message: 'Difficulty is either: easy, medium, difficulty',
-      },
-    },
-
-    passwordChangedAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Please tell us your name'],
+    trim: true,
   },
-  {
-    id: false,
-  }
-);
+
+  email: {
+    type: String,
+    required: [true, 'Please provide your email'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    validate: [validator.isEmail, 'Please provide a valid email'],
+  },
+
+  photo: {
+    type: String,
+  },
+
+  password: {
+    type: String,
+    required: [true, 'Please provide your password'],
+    minLength: [8, 'Password should be at least 8 characters.'],
+    select: false, // find
+  },
+
+  passwordConfirm: {
+    type: String,
+    required: [true, 'Please confirm your password'],
+    validate: {
+      validator: function (value) {
+        return value === this.password;
+      },
+
+      message: 'Passwords are not the same',
+    },
+  },
+
+  role: {
+    type: String,
+    enum: {
+      values: ['user', 'guide', 'lead-guide', 'admin'],
+      message: 'Difficulty is either: easy, medium, difficulty',
+    },
+  },
+
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
+});
 
 // Encrypt the password
 userSchema.pre('save', async function (next) {
@@ -107,6 +108,12 @@ userSchema.pre('save', function (next) {
   if (!this.isModified('password') || !this.isNew) return next();
 
   this.passwordChangedAt = Date.now();
+
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
 
   next();
 });

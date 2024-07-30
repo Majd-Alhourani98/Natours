@@ -34,6 +34,7 @@ const signup = catchAsync(async (req, res, next) => {
   const token = user.signToken(user._id);
 
   user.password = undefined;
+  user.active = undefined;
 
   res.status(201).json({
     status: 'success',
@@ -201,6 +202,16 @@ const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+// delete me
+const deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.user._id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: { user: null },
+  });
+});
+
 module.exports = {
   signup,
   login,
@@ -210,6 +221,7 @@ module.exports = {
   updateMe,
   forgotPassword,
   updatePassword,
+  deleteMe,
 };
 
 // POSTMAN ENVIRONMENT VARIABLES
