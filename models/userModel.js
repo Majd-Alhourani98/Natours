@@ -85,7 +85,7 @@ userSchema.methods.signToken = id => {
 };
 
 // check if the password changed after a token issued
-userSchema.methods.isChangedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.isPasswordChangedAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) return parseInt(this.passwordChangedAt.getTime() / 1000, 10) > JWTTimestamp;
 
   return false;
