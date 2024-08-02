@@ -249,3 +249,4 @@ module.exports = {
 // 2. Rate limiting --> express-rate-limit
 // 3. Setting Security headers
 // 4. Data Sanitization --> express-mongo-sanitize, xss-clean
+// 5. Preventing Parameter Pollution -->  hpp

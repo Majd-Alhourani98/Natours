@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const rateLimiter = require('express-rate-limit');
 const xss = require('xss-clean');
 const helmet = require('helmet');
+const hpp = require('hpp');
 
 const AppError = require('./util/AppError');
 
@@ -47,6 +48,9 @@ app.use(mongoSanitize());
 
 // DATA sanitization
 app.use(xss());
+
+// Prevent parameter pollution
+app.use(hpp({ whitelist: ['duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price'] }));
 
 // Enable logging in the development Environment
 if (process.env.NODE_ENV === 'development') {
