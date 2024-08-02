@@ -7,7 +7,6 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../util/catchAsync');
 const AppError = require('./../util/AppError');
 const sendEmail = require('./../util/email');
-const { allowedNodeEnvironmentFlags } = require('process');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -21,11 +20,16 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 // Cookie Options
-const cookieOptions = {
-  expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-  httpOnly: true,
+const createCookieOptions = () => {
+  const cookieOptions = {
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  return cookieOptions;
 };
-if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
 // Sign up
 const signup = catchAsync(async (req, res, next) => {
@@ -34,8 +38,6 @@ const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    // role: req.body.role,
-    // passwordChangedAt: req.body.passwordChangedAt
   });
 
   const token = user.signToken(user._id);
@@ -43,7 +45,7 @@ const signup = catchAsync(async (req, res, next) => {
   user.password = undefined;
   user.active = undefined;
 
-  res.cookie('jwt', token, cookieOptions);
+  res.cookie('jwt', token, createCookieOptions());
 
   res.status(201).json({
     status: 'success',
@@ -66,7 +68,7 @@ const login = catchAsync(async (req, res, next) => {
 
   const token = user.signToken(user._id);
 
-  res.cookie('jwt', token, cookieOptions);
+  res.cookie('jwt', token, createCookieOptions());
 
   res.status(200).json({
     status: 'success',
@@ -167,7 +169,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  res.cookie('jwt', JWTtoken, cookieOptions);
+  res.cookie('jwt', JWTtoken, createCookieOptions());
 
   const JWTtoken = user.signToken(user._id);
 
@@ -192,7 +194,9 @@ const updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   const token = user.signToken(user._id);
-  res.cookie('jwt', JWTtoken, cookieOptions);
+
+  res.cookie('jwt', JWTtoken, createCookieOptions);
+
   res.status(200).json({
     status: 'success',
     token,
@@ -230,12 +234,18 @@ module.exports = {
   login,
   protect,
   restrictTo,
-  resetPassword,
-  updateMe,
   forgotPassword,
+  resetPassword,
   updatePassword,
+  updateMe,
   deleteMe,
 };
 
 // POSTMAN ENVIRONMENT VARIABLES
 // pm.environment.set('jwt', pm.response.json().token)
+
+// Security Best Practice
+// 1. Sending JWT via Cookie
+// 2. Rate limiting --> express-rate-limit
+// 3. Setting Security headers
+// 4. Data Sanitization --> express-mongo-sanitize, xss-clean
