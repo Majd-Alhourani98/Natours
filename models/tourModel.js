@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -118,6 +119,9 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+
+    // refrencing -- child referncing
+    guides: Array,
   },
   {
     id: false,
@@ -154,6 +158,19 @@ tourSchema.pre('aggregate', function (next) {
   next();
 });
 
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async id => await User.findById(id).select('name email role'));
+//   this.guides = await Promise.all(guidesPromises);
+
+//   next();
+// });
+
+// tourSchema.post(/^find/, async function (docs, next) {
+//   const guidesPromises = docs.guides.map(async id => await User.findById(id));
+//   console.log(guidesPromises);
+//   docs.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

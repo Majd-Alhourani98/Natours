@@ -8,7 +8,7 @@ const Tour = require('./../models/tourModel');
 
 dotenv.config();
 
-const tours = JSON.parse(fs.readFileSync(path.join(__dirname, 'tours-simple.json'), 'utf-8'));
+const tours = JSON.parse(fs.readFileSync(path.join(__dirname, 'tours.json'), 'utf-8'));
 // DATABASE CONNECTION
 const MONGODB_URL = process.env.DATABASE_ATLAS_URL.replace('<PASSWORD>', process.env.DATABASE_ATLAS_PASSWORD);
 // const MONGODB_URL = process.env.DATABASE_LOCAL_URL;
