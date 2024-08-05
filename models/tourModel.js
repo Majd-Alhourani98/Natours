@@ -119,13 +119,13 @@ const tourSchema = new mongoose.Schema(
       },
     ],
 
-    // refrencing -- child referncing
+    // refrencing -- Embedding
     // guides: Array,
 
-    //  child referncing with user
+    //  child referncing with user collection
     guides: [
       {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: 'User',
       },
     ],
@@ -156,6 +156,16 @@ tourSchema.pre('save', function (next) {
 // Query middleware: exclude secret Tours from Query
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+// Pre Query Middleware to populate users
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt -role',
+  });
+
   next();
 });
 
