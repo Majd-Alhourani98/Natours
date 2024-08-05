@@ -46,6 +46,7 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
+    default: 'user',
     enum: {
       values: ['user', 'guide', 'lead-guide', 'admin'],
       message: 'Difficulty is either: easy, medium, difficulty',
