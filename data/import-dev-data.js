@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 const Tour = require('./../models/tourModel');
+const User = require('./../models/userModel');
 
 dotenv.config();
 
@@ -16,13 +17,16 @@ mongoose
   .connect(MONGODB_URL)
   .then(con => console.log('DATABASE CONNECTED'))
   .catch(err => console.log(err.message));
+
 const importData = async () => {
   await Tour.create(tours);
   console.log('Data imported successfully');
   process.exit();
 };
+
 const deleteData = async () => {
   await Tour.deleteMany();
+  await User.deleteMany();
   console.log('database deleted successfully');
   process.exit();
 };

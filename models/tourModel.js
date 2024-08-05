@@ -125,7 +125,7 @@ const tourSchema = new mongoose.Schema(
     //  child referncing with user collection
     guides: [
       {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User',
       },
     ],
