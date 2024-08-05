@@ -9,12 +9,13 @@ const helmet = require('helmet');
 const hpp = require('hpp');
 
 const AppError = require('./util/AppError');
+const globalErrorHandler = require('./middlewares/globalErrorHandler');
 
 // Importing Routing
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const authRouter = require('./routes/authRoutes');
-const globalErrorHandler = require('./middlewares/globalErrorHandler');
+const reviewRouter = require('./routes/reviewRoutes');
 
 // Creating an Express app
 const app = express();
@@ -61,6 +62,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/reviews', reviewRouter);
 
 // handle unhandled routes
 app.all('*', (req, res, next) => {
