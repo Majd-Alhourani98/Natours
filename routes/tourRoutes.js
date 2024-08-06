@@ -14,6 +14,8 @@ const {
 
 const { protect, restrictTo } = require('./../controllers/authController');
 
+const { createReview } = require('./../controllers/reviewController');
+
 router.route('/tours-stats').get(getTourStats);
 
 router.route('/monthly-plan/:year').get(getMonthlyPlan);
@@ -27,5 +29,11 @@ router
   .get(getSingleTour)
   .patch(updateTour)
   .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
+
+// POST /tours/23123/reviews
+// GET /tours/23123/reviews
+// GET /tours/23123/reviews/3213
+
+router.route('/:tourId/reviews').post(protect, restrictTo('user'), createReview);
 
 module.exports = router;

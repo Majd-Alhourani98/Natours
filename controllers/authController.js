@@ -103,7 +103,6 @@ const protect = catchAsync(async (req, res, next) => {
 
 const restrictTo = (...roles) => {
   return (req, res, next) => {
-    console.log(req.user);
     if (!roles.includes(req.user.role))
       return next(new AppError('You do not have permission to perfrom this action', 403));
 
