@@ -3,10 +3,15 @@ const AppError = require('./../util/AppError');
 const catchAsync = require('./../util/catchAsync');
 
 const getAllReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find();
+  // get all reviews
+  // get all reviews ==> tour
+  let filter = {};
+  if (req.params.tourId) filter = { tour: req.params.tourId };
+  const reviews = await Review.find(filter);
 
   res.status(200).json({
     status: 'success',
+    result: reviews.length,
     data: { reviews },
   });
 });
