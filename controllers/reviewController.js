@@ -1,6 +1,7 @@
 const Review = require('./../models/reviewModel');
 const AppError = require('./../util/AppError');
 const catchAsync = require('./../util/catchAsync');
+const factory = require('./handlerFactory');
 
 const getAllReviews = catchAsync(async (req, res, next) => {
   // get all reviews
@@ -55,17 +56,19 @@ const updateReview = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteReview = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const review = await Review.findByIdAndDelete(id);
+const deleteReview = factory.deleteOne(Review);
 
-  if (!review) return next(new AppError(`There is no tour with the: ${id}`));
+// const deleteReview = catchAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const review = await Review.findByIdAndDelete(id);
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+//   if (!review) return next(new AppError(`There is no tour with the: ${id}`));
+
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// });
 
 module.exports = {
   getAllReviews,

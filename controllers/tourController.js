@@ -3,6 +3,7 @@ const Tour = require('./../models/tourModel');
 const QueryBuilder = require('./../util/QueryBuilder');
 const catchAsync = require('./../util/catchAsync');
 const AppError = require('../util/AppError');
+const factory = require('./handlerFactory');
 
 const getAllTours = catchAsync(async (req, res, next) => {
   const queryBuilder = new QueryBuilder(Tour, req.query).filter().sort().select().paginate();
@@ -48,18 +49,19 @@ const updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteTour = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findByIdAndDelete(id);
+const deleteTour = factory.deleteOne(Tour);
+// const deleteTour = catchAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const tour = await Tour.findByIdAndDelete(id);
 
-  if (!tour) return next(new AppError(`No tour found with the ${id}`, 404));
-  res.status(204).json({
-    status: 'success',
-    data: {
-      tour: null,
-    },
-  });
-});
+//   if (!tour) return next(new AppError(`No tour found with the ${id}`, 404));
+//   res.status(204).json({
+//     status: 'success',
+//     data: {
+//       tour: null,
+//     },
+//   });
+// });
 
 const topFiveCheapTours = (req, res, next) => {
   req.query.sort = '-ratingsAverage,price';

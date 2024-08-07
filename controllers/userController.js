@@ -1,5 +1,6 @@
 const User = require('./../models/userModel');
 const catchAsync = require('./../util/catchAsync');
+const factory = require('./handlerFactory');
 
 const getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
@@ -36,14 +37,7 @@ const updateUser = (req, res) => {
   });
 };
 
-const deleteUser = (req, res) => {
-  res.status(204).json({
-    status: 'success',
-    data: {
-      user: null,
-    },
-  });
-};
+const deleteUser = factory.deleteOne(User);
 
 module.exports = {
   getAllUsers,

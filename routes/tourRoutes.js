@@ -18,7 +18,7 @@ const { protect, restrictTo } = require('./../controllers/authController');
 // const { createReview } = require('./../controllers/reviewController');
 
 const reviewsRouter = require('./reviewRoutes');
-// /api/tours
+
 router.use('/:tourId/reviews', reviewsRouter);
 
 router.route('/tours-stats').get(getTourStats);
@@ -29,11 +29,7 @@ router.route('/top-5-cheap-tours').get(topFiveCheapTours, getAllTours);
 
 router.route('/').get(getAllTours).post(createTour);
 
-router
-  .route('/:id')
-  .get(getSingleTour)
-  .patch(updateTour)
-  .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
+router.route('/:id').get(getSingleTour).patch(updateTour).delete(deleteTour);
 
 // simple nested route
 // POST /tours/23123/reviews
