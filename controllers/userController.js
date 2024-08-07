@@ -9,10 +9,16 @@ const createUser = factory.createOne(User);
 const updateUser = factory.updateOne(User);
 const deleteUser = factory.deleteOne(User);
 
+const getMe = (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
   createUser,
   updateUser,
   deleteUser,
+  getMe,
 };

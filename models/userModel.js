@@ -74,8 +74,8 @@ userSchema.pre('save', async function (next) {
 });
 
 // Check if the password is correct
-userSchema.methods.isCorrectPassword = async password => {
-  return await bcrypt.compare(password, this.password);
+userSchema.methods.isCorrectPassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword);
 };
 
 // Generete Token
