@@ -3,32 +3,8 @@ const AppError = require('./../util/AppError');
 const catchAsync = require('./../util/catchAsync');
 const factory = require('./handlerFactory');
 
-const getAllReviews = catchAsync(async (req, res, next) => {
-  // get all reviews
-  // get all reviews ==> tour
-  let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
-  const reviews = await Review.find(filter);
-
-  res.status(200).json({
-    status: 'success',
-    result: reviews.length,
-    data: { reviews },
-  });
-});
-
-const getSingleReview = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const review = await Review.findById(id);
-
-  if (!review) return next(new AppError(`There is no tour with the: ${id}`));
-
-  res.status(200).json({
-    status: 'success',
-    data: { review },
-  });
-});
-
+const getAllReviews = factory.getAll(Review);
+const getSingleReview = factory.getOne(Review);
 const createReview = factory.createOne(Review);
 const updateReview = factory.updateOne(Review);
 const deleteReview = factory.deleteOne(Review);
@@ -47,6 +23,32 @@ module.exports = {
   deleteReview,
   setTourIdUserId,
 };
+
+// ------------------- Get All reviews -------------------------------
+// const getAllReviews = catchAsync(async (req, res, next) => {
+//   let filter = {};
+//   if (req.params.tourId) filter = { tour: req.params.tourId };
+//   const reviews = await Review.find(filter);
+
+//   res.status(200).json({
+//     status: 'success',
+//     result: reviews.length,
+//     data: { reviews },
+//   });
+// });
+
+// ------------------- CREATE SINGLE REVIEW -------------------------------
+// const getSingleReview = catchAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const review = await Review.findById(id);
+
+//   if (!review) return next(new AppError(`There is no tour with the: ${id}`));
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: { review },
+//   });
+// });
 
 // ------------------- CREATE REVIEW -------------------------------
 // const createReview = catchAsync(async (req, res, next) => {

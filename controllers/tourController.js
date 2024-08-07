@@ -5,29 +5,8 @@ const catchAsync = require('./../util/catchAsync');
 const AppError = require('../util/AppError');
 const factory = require('./handlerFactory');
 
-const getAllTours = catchAsync(async (req, res, next) => {
-  const queryBuilder = new QueryBuilder(Tour, req.query).filter().sort().select().paginate();
-  const tours = await queryBuilder.query;
-
-  res.status(200).json({
-    status: 'success',
-    result: tours.length,
-    data: { tours },
-  });
-});
-
-const getSingleTour = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findById(id).populate('reviews');
-
-  if (!tour) return next(new AppError(`No tour found with the ${id}`, 404));
-
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
-});
-
+const getAllTours = factory.getAll(Tour);
+const getSingleTour = factory.getOne(Tour, { path: 'reviews' });
 const updateTour = factory.updateOne(Tour);
 const deleteTour = factory.deleteOne(Tour);
 const createTour = factory.createOne(Tour);
@@ -205,6 +184,31 @@ module.exports = {
   getTourStats,
   getMonthlyPlan,
 };
+
+// ------------------- GET TOUR -------------------------------
+// const getAllTours = catchAsync(async (req, res, next) => {
+//   const queryBuilder = new QueryBuilder(Tour, req.query).filter().sort().select().paginate();
+//   const tours = await queryBuilder.query;
+
+//   res.status(200).json({
+//     status: 'success',
+//     result: tours.length,
+//     data: { tours },
+//   });
+// });
+
+// ------------------- GET TOUR -------------------------------
+// const getSingleTour = catchAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const tour = await Tour.findById(id).populate('reviews');
+
+//   if (!tour) return next(new AppError(`No tour found with the ${id}`, 404));
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: { tour },
+//   });
+// });
 
 // ------------------- UPDATE TOUR -------------------------------
 // const createTour = catchAsync(async (req, res, next) => {
