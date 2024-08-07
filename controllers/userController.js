@@ -19,24 +19,9 @@ const getSingleUser = (req, res) => {
   });
 };
 
-const createUser = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-    data: {
-      user: '<create new user>',
-    },
-  });
-};
-
-const updateUser = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: '<update user>',
-    },
-  });
-};
-
+const createUser = factory.createOne(User);
+// do not use to update the passwords
+const updateUser = factory.updateOne(User);
 const deleteUser = factory.deleteOne(User);
 
 module.exports = {
