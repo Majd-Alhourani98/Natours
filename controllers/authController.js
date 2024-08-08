@@ -241,7 +241,7 @@ module.exports = {
   deleteMe,
 };
 
-// POSTMAN ENVIRONMENT VARIABLES
+// POSTMAN ENVIRONMENT VARIABLES, you can put this in the script inside postman to get the token
 // pm.environment.set('jwt', pm.response.json().token)
 
 // Security Best Practice
